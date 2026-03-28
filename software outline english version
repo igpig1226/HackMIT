@@ -1,0 +1,52 @@
+1. Entry & Authentication Flow
+•
+Splash Screen (SplashActivity): The launch screen of the app.
+◦
+Leads to: MainActivity (Login) when the user taps "Enter App".
+•
+Login Screen (MainActivity): Handles user authentication.
+◦
+Leads to: RegisterActivity if the user needs an account.
+◦
+Leads to: FaceVerifyActivity if logging in as a Rescuer (Username: "Rescuer", Pwd: "123").
+◦
+Leads to: UserMainActivity if logging in as a regular User (Username: "User", Pwd: "123").
+◦
+Leads to: ErrorActivity on failed login attempts.
+•
+Registration (RegisterActivity): Allows new users to sign up.
+◦
+Leads to: FaceInputActivity if an admin code ("codeadmin") is provided (Rescuer registration).
+◦
+Leads to: UserMainActivity if registering as a standard user (empty admin code).
+◦
+Leads to: ErrorActivity if an invalid admin code is entered.
+2. Rescuer Workspace (Admin/Staff)
+•
+Facial Verification (FaceVerifyActivity): A security layer for Rescuers.
+◦
+Leads to: RescuerMainActivity upon successful face match.
+•
+Rescuer Dashboard (RescuerMainActivity): The central hub for cat box management.
+◦
+Leads to: FoodStorageActivity to monitor and manage cat food levels.
+◦
+Leads to: CatListActivity to view the directory of cats currently in care.
+◦
+Leads to: HeatingActivity to control or monitor the temperature settings of the cat boxes.
+•
+Management Sub-pages:
+◦
+Cat List (CatListActivity): Displays all cats. Usually leads to CatEditActivity for updating cat profiles or medical status.
+3. User Experience (Adopters/Public)
+•
+User Dashboard (UserMainActivity): The main interface for general users.
+◦
+Leads to: AdoptDetailActivity where users can view specific information about cats available for adoption.
+4. Utility Pages
+•
+Error Page (ErrorActivity): A fallback screen shown when login fails or incorrect codes are entered.
+•
+Face Input (FaceInputActivity): Used during Rescuer registration to map facial data for future logins.
+Navigation Summary Map
+Splash ➔ Login ├─➔ Register ➔ Face Input (Admin) OR User Main ├─➔ Face Verify (Rescuer Path) ➔ Rescuer Main │     ├─➔ Food Storage │     ├─➔ Cat List ➔ Cat Edit │     └─➔ Heating Control └─➔ User Main (User Path) └─➔ Adoption Details
