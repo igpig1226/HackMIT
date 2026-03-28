@@ -1,0 +1,29 @@
+============================================================
+          Smart Cat Box - Project Hardware Wiring Map
+          Date: 2026-03-28 | Controller: ESP32-S3
+============================================================
+
+[Part 1: Control & Logic Link (Low Power)]
+------------------------------------------------------------
+From (Component)    | Pin/Port       | To (Target)      | Function
+------------------------------------------------------------
+MacBook Pro M4      | USB-C Port     | ESP32-S3 USB-C   | Power & Flash
+ESP32-S3            | 5V (VCC)       | Relay VCC (DC+)  | Relay Logic Power
+ESP32-S3            | GND            | Relay GND (DC-)  | Common Ground
+ESP32-S3            | D2 (GPIO 2)    | Relay IN (SIG)   | Control Signal
+------------------------------------------------------------
+
+[Part 2: Power & Heating Link (High Power - Isolated)]
+------------------------------------------------------------
+From (Source)       | Connection     | To (Load)        | Function
+------------------------------------------------------------
+Power Bank (5V)     | Positive (+)   | Relay COM        | Main Power Input
+Relay               | NO (Normal Open)| Heater (+)       | Switched Power
+Heater              | Negative (-)   | Power Bank GND   | Return Path
+------------------------------------------------------------
+
+[Part 3: Pin Reference for ESP32-S3]
+------------------------------------------------------------
+* RELAY_PIN: GPIO 2 (Marked as D2 on board)
+* Status LED: Built-in (Shared with GPIO 2 on some models)
+------------------------------------------------------------
