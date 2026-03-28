@@ -1,0 +1,36 @@
+const int RELAY_PIN = 2; 
+
+// 这里的逻辑根据你刚才的测试结果调整
+// 如果刚才 digitalWrite(RELAY_PIN, HIGH) 是加热，那就保持 false
+bool isLowLevelTrigger = false; 
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(RELAY_PIN, OUTPUT);
+  
+  // 启动时强制关闭，防止意外过热
+  stopHeating();
+  
+  Serial.println("\n===================================");
+  Serial.println("  Smart Cat Box: 安全加热测试模式  ");
+  Serial.println("===================================");
+}
+
+void loop() {
+  // 模拟一个安全加热周期：加热 60 秒，冷却 180 秒
+  startHeating();
+  Serial.println(">>> 正在进行 1000 秒安全加热...");
+  delay(1000000); 
+
+  stopHeating();
+  Serial.println("<<< 进入 180 秒冷却保护期，防止移动电源过载...");
+  delay(180000); 
+}
+
+void startHeating() {
+  digitalWrite(RELAY_PIN, isLowLevelTrigger ? LOW : HIGH);
+}
+
+void stopHeating() {
+  digitalWrite(RELAY_PIN, isLowLevelTrigger ? HIGH : LOW);
+}
