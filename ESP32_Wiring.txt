@@ -1,29 +1,35 @@
 ============================================================
-          Smart Cat Box - Project Hardware Wiring Map
-          Date: 2026-03-28 | Controller: ESP32-S3
+      Smart Cat Box - Wiring Map (Adapted to Friend's Code)
 ============================================================
 
-[Part 1: Control & Logic Link (Low Power)]
+[I. Power Bus - Breadboard]
+ESP32 3V3  -----> Red (+) Rail (For SHT30)
+ESP32 5V   -----> (Optional Rail) (For Relay VCC)
+ESP32 GND  -----> Blue (-) Rail (COMMON GROUND - CRITICAL!)
+
+[II. Logic / Signal Pins]
 ------------------------------------------------------------
-From (Component)    | Pin/Port       | To (Target)      | Function
+Component    | Code Pin  | Physical Pin on XIAO S3
 ------------------------------------------------------------
-MacBook Pro M4      | USB-C Port     | ESP32-S3 USB-C   | Power & Flash
-ESP32-S3            | 5V (VCC)       | Relay VCC (DC+)  | Relay Logic Power
-ESP32-S3            | GND            | Relay GND (DC-)  | Common Ground
-ESP32-S3            | D2 (GPIO 2)    | Relay IN (SIG)   | Control Signal
+PIR Sensor   | 1         | D1 (GPIO 1)
+Relay IN     | D2        | D2 (GPIO 2)
+SHT30 SDA    | Default   | D4 (GPIO 4)
+SHT30 SCL    | Default   | D5 (GPIO 5)
 ------------------------------------------------------------
 
-[Part 2: Power & Heating Link (High Power - Isolated)]
-------------------------------------------------------------
-From (Source)       | Connection     | To (Load)        | Function
-------------------------------------------------------------
-Power Bank (5V)     | Positive (+)   | Relay COM        | Main Power Input
-Relay               | NO (Normal Open)| Heater (+)       | Switched Power
-Heater              | Negative (-)   | Power Bank GND   | Return Path
-------------------------------------------------------------
+[III. SHT30 Specifics]
+VCC  -----> 3V3 (ESP32 3.3V pin)
+GND  -----> GND
+SDA  -----> D4
+SCL  -----> D5
 
-[Part 3: Pin Reference for ESP32-S3]
-------------------------------------------------------------
-* RELAY_PIN: GPIO 2 (Marked as D2 on board)
-* Status LED: Built-in (Shared with GPIO 2 on some models)
-------------------------------------------------------------
+[IV. PIR Specifics]
+VCC  -----> 5V (XIAO 5V pin)
+GND  -----> GND
+OUT  -----> D1
+
+[V. Relay Specifics]
+VCC  -----> 5V (XIAO 5V pin)
+GND  -----> GND
+IN   -----> D2
+============================================================
