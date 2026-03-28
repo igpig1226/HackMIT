@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 import time
 import threading
 import json
@@ -21,7 +18,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 TEST_CAT_PATH = os.path.join(BASE_DIR, "test_cat.jpg")
 RUN_TFLITE = os.path.join(BASE_DIR, "run_tflite.py")
 
-latest_pred_class = None   # 0=is cat, 1=not cat
+latest_pred_class = None   # 0 = cat, 1 = not cat
 latest_update_time = None
 latest_status = "not_started"
 latest_error = None
@@ -42,7 +39,7 @@ def fetch_image_once() -> bytes:
     with urllib.request.urlopen(req, timeout=HTTP_TIMEOUT) as resp:
         content_type = resp.headers.get("Content-Type", "")
         if "image/jpeg" not in content_type and "image/jpg" not in content_type:
-            log("警告: /capture 返回的 Content-Type =", content_type)
+            log("Warning: /capture returned Content-Type =", content_type)
 
         data = resp.read(MAX_IMAGE_SIZE + 1)
         if len(data) > MAX_IMAGE_SIZE:
@@ -56,11 +53,7 @@ def save_as_test_cat(image_bytes: bytes):
         f.write(image_bytes)
 
 
-def run_cat_classifier() -> int | None:
-    """
-    直接运行 python3 run_tflite.py
-    要求它最终 stdout 输出 0 或 1
-    """
+def run_cat_classifier() -> int | None
     try:
         result = subprocess.run(
             ["python3", RUN_TFLITE],
@@ -70,7 +63,7 @@ def run_cat_classifier() -> int | None:
             cwd=BASE_DIR
         )
     except Exception as e:
-        log("run_tflite.py 调用失败:", e)
+        log("Failed to run run_tflite.py:", e)
         return None
 
     stdout = (result.stdout or "").strip()
@@ -80,17 +73,17 @@ def run_cat_classifier() -> int | None:
         log("run_tflite stderr:", stderr)
 
     if result.returncode != 0:
-        log("run_tflite 返回码异常:", result.returncode, "stdout=", stdout)
+        log("run_tflite returned a non-zero exit code:", result.returncode, "stdout=", stdout)
         return None
 
     lines = [x.strip() for x in stdout.splitlines() if x.strip()]
     if not lines:
-        log("run_tflite 没有输出 pred_class")
+        log("run_tflite did not output pred_class")
         return None
 
     last = lines[-1]
     if last not in ("0", "1"):
-        log("run_tflite 输出非法:", last)
+        log("Invalid output from run_tflite:", last)
         return None
 
     return int(last)
@@ -102,7 +95,7 @@ def poll_esp32_forever():
     while True:
         try:
             image_bytes = fetch_image_once()
-            save_as_test_cat(image_bytes)   # 覆盖写入 test_cat.jpg
+            save_as_test_cat(image_bytes)   # overwrite test_cat.jpg
 
             pred = run_cat_classifier()
 
@@ -117,15 +110,15 @@ def poll_esp32_forever():
                     latest_error = None
 
             if pred is None:
-                log("本轮失败: 分类失败")
+                log("Current round failed: classification failed")
             else:
-                log(f"本轮成功: pred_class={pred}")
+                log(f"Current round succeeded: pred_class={pred}")
 
         except Exception as e:
             with state_lock:
                 latest_status = "fetch_failed"
                 latest_error = str(e)
-            log("抓取或保存图片失败:", e)
+            log("Failed to fetch or save image:", e)
 
         time.sleep(POLL_INTERVAL)
 
@@ -183,14 +176,14 @@ class Handler(BaseHTTPRequestHandler):
 
 def main():
     if not os.path.exists(RUN_TFLITE):
-        raise FileNotFoundError(f"未找到 {RUN_TFLITE}")
+        raise FileNotFoundError(f"Could not find {RUN_TFLITE}")
 
     t = threading.Thread(target=poll_esp32_forever, daemon=True)
     t.start()
 
     server = ThreadingHTTPServer((HOST, PORT), Handler)
     log(f"Listening on http://{HOST}:{PORT}")
-    log(f"Polling {ESP32_CAPTURE_URL} every {POLL_INTERVAL}s")
+    log(f"Polling {ESP32_CAPTURE_URL} every {POLL_INTERVAL} seconds")
     log(f"Saving latest image to {TEST_CAT_PATH}")
     server.serve_forever()
 
